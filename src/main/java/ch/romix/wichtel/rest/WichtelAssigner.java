@@ -6,12 +6,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import ch.romix.wichtel.model.Wichtel;
+import ch.romix.wichtel.model.WichtelData;
 import ch.romix.wichtel.model.WichtelEvent;
 
 public class WichtelAssigner {
 
   public static void assign(WichtelEvent event) {
-    if (event.getWichtels().size() <= 1) {
+    List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
+    if (wichtels.size() <= 1) {
       throw new RuntimeException("WTF! You can't assign wichtels with only one or less wichtel. That's not fun! It does not make sense!");
     }
     if (!event.isCompleted()) {
@@ -23,7 +25,7 @@ public class WichtelAssigner {
   }
 
   private static boolean isCorrectlyAssigned(WichtelEvent event) {
-    List<Wichtel> wichtels = event.getWichtels();
+    List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
     Set<Long> setOfWichtelIds = wichtels.stream().map(Wichtel::getResId).collect(Collectors.toSet());
     long goodEntries = wichtels.stream() //
         .filter(WichtelAssigner::doesNotWichtelToHimself) //
@@ -39,9 +41,10 @@ public class WichtelAssigner {
   }
 
   private static void assignWichtels(WichtelEvent event) {
+    List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
     List<Long> availableWichtel = new ArrayList<>();
-    event.getWichtels().forEach(w -> availableWichtel.add(w.getResId()));
-    event.getWichtels().forEach(w -> {
+    wichtels.forEach(w -> availableWichtel.add(w.getResId()));
+    wichtels.forEach(w -> {
       int wichtelToIndex = (int) (availableWichtel.size() * Math.random());
       Long wichtelTo = availableWichtel.get(wichtelToIndex);
       w.setWichtelTo(wichtelTo);

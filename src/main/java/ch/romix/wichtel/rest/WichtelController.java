@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.romix.wichtel.model.Wichtel;
+import ch.romix.wichtel.model.WichtelData;
 import ch.romix.wichtel.model.WichtelEvent;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -25,10 +26,7 @@ public class WichtelController {
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.POST)
   public HttpEntity<Void> addWichtel(@RequestBody Wichtel wichtel, @PathVariable("eid") Long eventId) {
-    long id = (long) (Math.random() * Long.MAX_VALUE);
-    wichtel.setResId(id);
-    WichtelEvent event = WichtelEventController.events.get(eventId);
-    event.getWichtels().add(wichtel);
+    WichtelData.addWichtelToEvent(eventId, wichtel);
     URI location = linkTo(methodOn(getClass()).getWichtel(eventId, wichtel.getResId())).toUri();
     return ResponseEntity.created(location).build();
   }
@@ -36,11 +34,11 @@ public class WichtelController {
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.GET)
   public HttpEntity<Collection<Link>> getWichtelLinks(@PathVariable("eid") Long eventId) {
     ArrayList<Link> links = new ArrayList<>();
-    WichtelEvent event = WichtelEventController.events.get(eventId);
+    WichtelEvent event = WichtelData.getEventByResId(eventId);
     if (event.isCompleted()) {
       return new ResponseEntity<Collection<Link>>(HttpStatus.FORBIDDEN);
     }
-    for (Wichtel wichtel : event.getWichtels()) {
+    for (Wichtel wichtel : WichtelData.getWichtelListByEventResId(eventId)) {
       Link link = linkTo(methodOn(getClass()).getWichtel(eventId, wichtel.getResId())).withRel("wichtel");
       links.add(link);
     }
@@ -49,15 +47,15 @@ public class WichtelController {
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel/{id}", method = RequestMethod.GET)
   public HttpEntity<Wichtel> getWichtel(@PathVariable("eid") Long eventId, @PathVariable("id") Long wichtelId) {
-    WichtelEvent event = WichtelEventController.events.get(eventId);
+    WichtelEvent event = WichtelData.getEventByResId(eventId);
     if (event.isCompleted()) {
       return new ResponseEntity<Wichtel>(HttpStatus.FORBIDDEN);
     }
-    for (Wichtel wichtel : event.getWichtels()) {
-      if (wichtel.getResId() == wichtelId.longValue()) {
-        return ResponseEntity.ok(wichtel);
-      }
+    Wichtel wichtel = WichtelData.getWichtelByEventAndWichtelResId(eventId, wichtelId);
+    if (wichtel == null) {
+      return new ResponseEntity<Wichtel>(HttpStatus.NOT_FOUND);
+    } else {
+      return ResponseEntity.ok(wichtel);
     }
-    return new ResponseEntity<Wichtel>(HttpStatus.NOT_FOUND);
   }
 }

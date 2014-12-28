@@ -3,8 +3,6 @@ package ch.romix.wichtel.rest;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.romix.wichtel.model.WichtelData;
 import ch.romix.wichtel.model.WichtelEvent;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -24,13 +23,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 public class WichtelEventController {
 
-  final static Map<Long, WichtelEvent> events = new ConcurrentHashMap<>();
-
   @RequestMapping(value = "/rest/event", method = RequestMethod.POST)
   public HttpEntity<Void> addEvent(@RequestBody WichtelEvent event) {
-    long id = (long) (Math.random() * Long.MAX_VALUE);
-    event.setResId(id);
-    events.put(event.getResId(), event);
+    WichtelData.addEvent(event);
     URI uri = linkTo(methodOn(getClass()).getWichtelEvent(event.getResId())).toUri();
     return ResponseEntity.created(uri).build();
   }
@@ -38,16 +33,16 @@ public class WichtelEventController {
   @RequestMapping(value = "/rest/event", method = RequestMethod.GET)
   public Collection<Link> getWichtelEventLinks() {
     ArrayList<Link> links = new ArrayList<>();
-    for (WichtelEvent wichtel : events.values()) {
+    for (WichtelEvent wichtel : WichtelData.getAllEvents()) {
       Link link = linkTo(methodOn(getClass()).getWichtelEvent(wichtel.getResId())).withRel("event");
       links.add(link);
     }
     return links;
   }
 
-  @RequestMapping(value = "/rest/event/{id}", method = RequestMethod.GET)
-  public HttpEntity<WichtelEvent> getWichtelEvent(@PathVariable("id") Long id) {
-    WichtelEvent event = events.get(id);
+  @RequestMapping(value = "/rest/event/{resId}", method = RequestMethod.GET)
+  public HttpEntity<WichtelEvent> getWichtelEvent(@PathVariable("resId") Long resId) {
+    WichtelEvent event = WichtelData.getEventByResId(resId);
     Link linkToWichtels = linkTo(methodOn(WichtelController.class).addWichtel(null, event.getResId())).withRel("wichtel");
     Link linkToCompleted = linkTo(methodOn(WichtelEventController.class).completeWichtelEvent(event.getResId())).withRel("completed");
     event.removeLinks();
@@ -56,9 +51,9 @@ public class WichtelEventController {
     return new ResponseEntity<WichtelEvent>(event, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/rest/event/{id}/completed", method = RequestMethod.PUT)
-  public HttpEntity<Void> completeWichtelEvent(@PathVariable("id") Long id) {
-    WichtelEvent event = events.get(id);
+  @RequestMapping(value = "/rest/event/{resId}/completed", method = RequestMethod.PUT)
+  public HttpEntity<Void> completeWichtelEvent(@PathVariable("resId") Long resId) {
+    WichtelEvent event = WichtelData.getEventByResId(resId);
     WichtelAssigner.assign(event);
     sendWichtelMails(event);
     return new ResponseEntity<Void>(HttpStatus.OK);
@@ -67,6 +62,7 @@ public class WichtelEventController {
 
 
   private void sendWichtelMails(WichtelEvent event) {
-    System.out.println("Send wichtel mails for " + event.getName() + " which has " + event.getWichtels().size() + " wichtels.");
+    System.out.println("Send wichtel mails for " + event.getName() + " which has "
+        + WichtelData.getWichtelListByEventResId(event.getResId()).size() + " wichtels.");
   }
 }
