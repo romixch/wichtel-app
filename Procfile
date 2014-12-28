@@ -1,0 +1,1 @@
+web:    java -cp target/wichtel-0.0.1-SNAPSHOT.jar

@@ -1,0 +1,6 @@
+/target/
+.settings/
+.classpath
+.project
+src/main/resources/static/melissa.css
+src/main/resources/static/melissa.html
