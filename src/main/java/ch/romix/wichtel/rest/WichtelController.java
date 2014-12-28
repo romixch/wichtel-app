@@ -37,6 +37,9 @@ public class WichtelController {
   public HttpEntity<Collection<Link>> getWichtelLinks(@PathVariable("eid") Long eventId) {
     ArrayList<Link> links = new ArrayList<>();
     WichtelEvent event = WichtelEventController.events.get(eventId);
+    if (event.isCompleted()) {
+      return new ResponseEntity<Collection<Link>>(HttpStatus.FORBIDDEN);
+    }
     for (Wichtel wichtel : event.getWichtels()) {
       Link link = linkTo(methodOn(getClass()).getWichtel(eventId, wichtel.getResId())).withRel("wichtel");
       links.add(link);
@@ -47,6 +50,9 @@ public class WichtelController {
   @RequestMapping(value = "/rest/event/{eid}/wichtel/{id}", method = RequestMethod.GET)
   public HttpEntity<Wichtel> getWichtel(@PathVariable("eid") Long eventId, @PathVariable("id") Long wichtelId) {
     WichtelEvent event = WichtelEventController.events.get(eventId);
+    if (event.isCompleted()) {
+      return new ResponseEntity<Wichtel>(HttpStatus.FORBIDDEN);
+    }
     for (Wichtel wichtel : event.getWichtels()) {
       if (wichtel.getId().equals(wichtelId)) {
         return ResponseEntity.ok(wichtel);

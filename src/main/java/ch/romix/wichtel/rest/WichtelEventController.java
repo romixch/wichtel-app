@@ -3,10 +3,7 @@ package ch.romix.wichtel.rest;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.hateoas.Link;
@@ -51,45 +48,23 @@ public class WichtelEventController {
   @RequestMapping(value = "/rest/event/{id}", method = RequestMethod.GET)
   public HttpEntity<WichtelEvent> getWichtelEvent(@PathVariable("id") Long id) {
     WichtelEvent event = events.get(id);
-    Link link = linkTo(methodOn(WichtelController.class).addWichtel(null, event.getResId())).withRel("wichtel");
+    Link linkToWichtels = linkTo(methodOn(WichtelController.class).addWichtel(null, event.getResId())).withRel("wichtel");
+    Link linkToCompleted = linkTo(methodOn(WichtelEventController.class).completeWichtelEvent(event.getResId())).withRel("completed");
     event.removeLinks();
-    event.add(link);
+    event.add(linkToWichtels);
+    event.add(linkToCompleted);
     return new ResponseEntity<WichtelEvent>(event, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/rest/event/{id}/completed", method = RequestMethod.PUT)
   public HttpEntity<Void> completeWichtelEvent(@PathVariable("id") Long id) {
     WichtelEvent event = events.get(id);
-    complete(event);
+    WichtelAssigner.assign(event);
+    sendWichtelMails(event);
     return new ResponseEntity<Void>(HttpStatus.OK);
   }
 
-  private void complete(WichtelEvent event) {
-    if (!event.isCompleted()) {
-      while (!isCorrectlyAssigned(event)) {
-        assignWichtels(event);
-      }
-      event.setCompleted(true);
-    }
-    sendWichtelMails(event);
-  }
 
-  private boolean isCorrectlyAssigned(WichtelEvent event) {
-    Set<Long> availableWichtel = new HashSet<Long>();
-    event.getWichtels().forEach(w -> availableWichtel.add(w.getResId()));
-    event.getWichtels().forEach(w -> availableWichtel.remove(w.getWichtelTo()));
-    return availableWichtel.isEmpty();
-  }
-
-  private void assignWichtels(WichtelEvent event) {
-    List<Long> availableWichtel = new ArrayList<>();
-    event.getWichtels().forEach(w -> availableWichtel.add(w.getResId()));
-    event.getWichtels().forEach(w -> {
-      int wichtelTo = (int) Math.random() * availableWichtel.size();
-      availableWichtel.get(wichtelTo);
-      availableWichtel.remove(wichtelTo);
-    });
-  }
 
   private void sendWichtelMails(WichtelEvent event) {
     System.out.println("Send wichtel mails for " + event.getName() + " which has " + event.getWichtels().size() + " wichtels.");
