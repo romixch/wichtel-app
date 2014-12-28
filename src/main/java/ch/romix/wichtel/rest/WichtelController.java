@@ -54,7 +54,7 @@ public class WichtelController {
       return new ResponseEntity<Wichtel>(HttpStatus.FORBIDDEN);
     }
     for (Wichtel wichtel : event.getWichtels()) {
-      if (wichtel.getId().equals(wichtelId)) {
+      if (wichtel.getResId() == wichtelId.longValue()) {
         return ResponseEntity.ok(wichtel);
       }
     }
