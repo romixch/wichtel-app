@@ -2,6 +2,6 @@
 .settings/
 .classpath
 .project
-src/main/resources/static/melissa.css
-src/main/resources/static/melissa.html
-src/main/resources/static/hintergrund.JPG
+src/main/resources/public/melissa.css
+src/main/resources/public/melissa.html
+src/main/resources/public/hintergrund.JPG
