@@ -7,7 +7,8 @@ angular
 						function($scope) {
 							$scope.title = '';
 							$scope.id = '';
-							$scope.currentWichtel = '';
+							$scope.currentName = '';
+							$scope.currentEmail = '';
 							$scope.wichtels = [];
 
 							$scope.createEvent = function() {
@@ -15,7 +16,9 @@ angular
 							};
 
 							$scope.addWichtel = function() {
-								$scope.wichtels.push({email : $scope.currentWichtel});
-								$scope.currentWichtel = '';
+								$scope.wichtels.push({name : $scope.currentName, email : $scope.currentEmail});
+								$scope.currentName = '';
+								$scope.currentEmail = '';
+								document.getElementById('currentName').focus();
 							}
 						} ]);

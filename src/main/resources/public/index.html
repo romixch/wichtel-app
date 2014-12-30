@@ -39,30 +39,52 @@
 		<div class="row">
 			<div class="col-sm-8">
 				<input type="text" class="form-control" placeholder="Wichtel-Titel" ng-model="title">
-					<ul>
-					<li ng-repeat="wichtel in wichtels">{{wichtel.email}}</li>
-					</ul>
 			</div>
 			<div class="col-sm-4">
-				<p>Es ist einfach. Erfasse einen Titel f&uuml;r deinen Wichtel-Anlass. Dann f&uuml;gst du alle teilnehmenden Personen unten ein und
-					klickst auf "Auslosen". Alle Personen bekommen anschliessend ein E-Mail mit ihrem zugeteilten Wichtel.</p>
+				<p>Gib einen Titel f&uuml;r deinen Wichtel-Event ein, damit deine Teilnehmer wissen, worum es geht.</p>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-sm-12">
-				<div class="form-group">
-					<div class="input-group">
-						<input type="email" class="form-control" placeholder="E-Mail-Adresse der Teilnehmenden Person" ng-model="currentWichtel">
-						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="addWichtel()">hinzuf&uuml;gen</button>
-						</span>
-					</div>
+			<div class="col-sm-8">
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<tr>
+							<th>Teilnehmer</th>
+							<th>E-Mail</th>
+							<th></th>
+						</tr>
+						<tr ng-repeat="wichtel in wichtels">
+							<td>{{wichtel.name}}</td>
+							<td>{{wichtel.email}}</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>
+								<div class="form-group">
+									<input id="currentName" type="text" class="form-control" placeholder="Name der teilnehmenden Person" ng-model="currentName">
+								</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<input type="text" class="form-control" placeholder="E-Mail-Adresse" ng-model="currentEmail">
+								</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<button class="btn btn-default" type="button" ng-click="addWichtel()">hinzuf&uuml;gen</button>
+								</div>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
+			<div class="col-sm-4">F&uuml;ge Teilnehmer hinzu. Die Wichtel erhalten sp&auml;ter ein E-Mail wo drin steht, wem sie wichteln
+				d&uuml;rfen.</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group">
+					<p>Jetzt kanns los gehen! Wenn du mit allem fertig bist, klicke auf "Auslosen". Dann werden alle E-Mails verschickt.</p>
 					<div class="input-group">
 						<button class="btn btn-primary" type="button" ng-click="createEvent()">Auslosen</button>
 					</div>
