@@ -40,7 +40,7 @@ public class WichtelData {
 
   public static Wichtel getWichtelByEventAndWichtelResId(Long eventResId, Long wichtelResId) {
     List<Wichtel> wichtelList = wichtels.getOrDefault(eventResId, Collections.emptyList());
-    Optional<Wichtel> optionalWichtel = wichtelList.stream().filter(w -> w.getResId() == eventResId.longValue()).findAny();
+    Optional<Wichtel> optionalWichtel = wichtelList.stream().filter(w -> w.getResId() == wichtelResId.longValue()).findAny();
     return optionalWichtel.orElse(null);
   }
 }
