@@ -16,9 +16,6 @@ public class WichtelMailSender {
   private JavaMailSender mailSender;
 
   public void send(WichtelEvent event, Wichtel mailReceiver, Wichtel toBeWichteled) {
-
-    System.out.println("mailSender: " + mailSender);
-
     MimeMessage message = mailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message);
     try {
