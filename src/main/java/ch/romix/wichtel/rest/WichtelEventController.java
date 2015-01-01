@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 public class WichtelEventController {
+
+  @Autowired
+  private WichtelMailSender wichtelMailSender;
 
   @RequestMapping(value = "/rest/event", method = RequestMethod.POST)
   public HttpEntity<Void> addEvent(@RequestBody WichtelEvent event) {
@@ -71,6 +75,7 @@ public class WichtelEventController {
       Wichtel wichtelTo = WichtelData.getWichtelByEventAndWichtelResId(event.getResId(), wichtel.getWichtelTo());
       System.out.println(event.getName() + ": " + wichtel.getName() + " with E-Mail " + wichtel.getEmail() + " wichtels to "
           + wichtelTo.getName() + " (" + wichtelTo.getEmail() + ")");
+      wichtelMailSender.send(event, wichtel, wichtelTo);
     }
   }
 }
