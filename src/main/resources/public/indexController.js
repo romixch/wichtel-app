@@ -57,13 +57,25 @@ app
 								.update(
 										'true',
 										function(data) {
-											alert('Vielen Dank für dein Interesse. Der Versand der E-Mails ist noch nicht automatisiert. Er kann daher eine Weile dauern.');
+											alert('Es hat geklappt. Die Zuteilung wurde verlost und die Mails verschickt.');
+										},
+										function(error) {
+											alert('Ups, da ist was schief gegangen. Hast du alle E-Mail-Adressen richtig eingegeben?\n'
+													+ 'Fehlermeldung:\n'
+													+ error.data.status
+													+ ' '
+													+ error.data.error
+													+ '\n'
+													+ error.data.message);
 										});
 					};
 				});
 
-app.controller('LostAndFoundController', function($scope) {
-	$scope.lostAndFound = function() {
-		alert('Oh. Schön, dass dir dieses Feature gefällt. Leider funktioniert es im Moment noch nicht. Wir arbeiten aber daran.');
-	}
-});
+app
+		.controller(
+				'LostAndFoundController',
+				function($scope) {
+					$scope.lostAndFound = function() {
+						alert('Oh. Schön, dass dir dieses Feature gefällt. Leider funktioniert es im Moment noch nicht. Wir arbeiten aber daran.');
+					}
+				});
