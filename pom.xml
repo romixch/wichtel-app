@@ -49,6 +49,12 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jvnet.mock-javamail</groupId>
+			<artifactId>mock-javamail</artifactId>
+			<version>1.9</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
