@@ -3,3 +3,7 @@
 body {
 	padding-top: 70px;
 }
+
+.bg-primary, .bg-info, .bg-warning, .bg-success, .bg-danger {
+	padding: 8px;
+}
