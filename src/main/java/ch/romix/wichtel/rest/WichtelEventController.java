@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.romix.wichtel.model.MailStates;
 import ch.romix.wichtel.model.Wichtel;
 import ch.romix.wichtel.model.WichtelData;
 import ch.romix.wichtel.model.WichtelEvent;
+import ch.romix.wichtel.model.WichtelMailState;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -61,21 +64,16 @@ public class WichtelEventController {
   public HttpEntity<Void> completeWichtelEvent(@PathVariable("resId") Long resId) {
     WichtelEvent event = WichtelData.getEventByResId(resId);
     WichtelAssigner.assign(event);
-    sendWichtelMails(event);
-    return new ResponseEntity<Void>(HttpStatus.OK);
+    wichtelMailSender.sendWichtelMailsAndComplete(event);
+    Link completionState = linkTo(methodOn(WichtelEventController.class).getWichtelEventCompletionState(resId)).withSelfRel();
+    return ResponseEntity.accepted().location(URI.create(completionState.getHref())).build();
   }
 
-
-
-  private void sendWichtelMails(WichtelEvent event) {
-    System.out.println("Send wichtel mails for " + event.getName() + " which has "
-        + WichtelData.getWichtelListByEventResId(event.getResId()).size() + " wichtels:");
-    List<Wichtel> wichtelList = WichtelData.getWichtelListByEventResId(event.getResId());
-    for (Wichtel wichtel : wichtelList) {
-      Wichtel wichtelTo = WichtelData.getWichtelByEventAndWichtelResId(event.getResId(), wichtel.getWichtelTo());
-      System.out.println(event.getName() + ": " + wichtel.getName() + " with E-Mail " + wichtel.getEmail() + " wichtels to "
-          + wichtelTo.getName() + " (" + wichtelTo.getEmail() + ")");
-      wichtelMailSender.send(event, wichtel, wichtelTo);
-    }
+  @RequestMapping(value = "/rest/event/{resId}/completed", method = RequestMethod.GET)
+  public HttpEntity<MailStates> getWichtelEventCompletionState(@PathVariable("resId") Long resId) {
+    List<Wichtel> wichtelList = WichtelData.getWichtelListByEventResId(resId);
+    List<WichtelMailState> mailStates = wichtelList.stream().map(w -> new WichtelMailState(w)).collect(Collectors.toList());
+    return new ResponseEntity<MailStates>(new MailStates(mailStates), HttpStatus.OK);
   }
+
 }

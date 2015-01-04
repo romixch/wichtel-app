@@ -53,7 +53,7 @@ public class CompletionTest {
   }
 
   @Test
-  public void testCompleteWichtelEvent() throws MessagingException, IOException {
+  public void testCompleteWichtelEvent() throws MessagingException, IOException, InterruptedException {
     WichtelEvent event = createEvent("MyEvent");
     Link wichtelLink = event.getLink("wichtel");
     postWichtel(wichtelLink, "w1@example.com", "w1");
@@ -61,6 +61,7 @@ public class CompletionTest {
     Link completeLink = event.getLink("completed");
     assertNotNull(completeLink);
     restTemplate.put(completeLink.getHref(), Boolean.TRUE);
+    Thread.sleep(1000); // wait for mails to be sent
     assertSentMail("wichtelapp.mailer@gmail.com", "w1@example.com", "Wichteln für MyEvent", "Wichtel2");
     assertSentMail("wichtelapp.mailer@gmail.com", "wichtel2@example.com", "Wichteln für MyEvent", "w1");
     assertNoMoreMails("w1@example.com");

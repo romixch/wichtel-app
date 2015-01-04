@@ -7,19 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-import ch.romix.wichtel.rest.WichtelMailSender;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
+@EnableAsync
 public class WichtelApp {
 
   public static void main(String[] args) {
     SpringApplication.run(WichtelApp.class, args);
-  }
-
-  @Bean
-  public WichtelMailSender wichtelMailSender() {
-    return new WichtelMailSender();
   }
 
   @Bean

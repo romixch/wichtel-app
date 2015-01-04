@@ -20,7 +20,6 @@ public class WichtelAssigner {
       while (!isCorrectlyAssigned(event)) {
         assignWichtels(event);
       }
-      event.setCompleted(true);
     }
   }
 

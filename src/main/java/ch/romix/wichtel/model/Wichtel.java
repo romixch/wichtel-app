@@ -2,13 +2,21 @@ package ch.romix.wichtel.model;
 
 import org.springframework.hateoas.ResourceSupport;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
+/**
+ * @author roman
+ *
+ */
 public class Wichtel extends ResourceSupport {
 
   private long resId;
   private String name;
   private String email;
   private long wichtelTo;
+  private boolean mailSent;
+  private String sendError;
 
   public long getResId() {
     return resId;
@@ -34,6 +42,7 @@ public class Wichtel extends ResourceSupport {
     this.email = email;
   }
 
+  @JsonIgnore
   public long getWichtelTo() {
     return wichtelTo;
   }
@@ -42,5 +51,23 @@ public class Wichtel extends ResourceSupport {
     this.wichtelTo = wichtelTo;
   }
 
+  public boolean isMailSent() {
+    return mailSent;
+  }
 
+  public void setMailSent(boolean mailSent) {
+    this.mailSent = mailSent;
+  }
+
+  public boolean isError() {
+    return sendError != null;
+  }
+
+  public void setSendError(String sendError) {
+    this.sendError = sendError;
+  }
+
+  public String getSendError() {
+    return sendError;
+  }
 }
