@@ -2,30 +2,37 @@ package ch.romix.wichtel.model;
 
 import java.util.UUID;
 
-import org.springframework.hateoas.ResourceSupport;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
+@Entity
+@Table(name = "Wichtel")
+public class WichtelEntity {
 
-/**
- * @author roman
- *
- */
-public class Wichtel extends ResourceSupport {
-
-  private UUID resId;
+  @Id
+  @Type(type = "pg-uuid")
+  private UUID id;
+  @Column(nullable = false)
   private String name;
+  @Column(nullable = false)
   private String email;
-  private UUID wichtelTo;
   private boolean mailSent;
   private String sendError;
 
-  public UUID getResId() {
-    return resId;
+  @OneToOne
+  private WichtelEntity wichtelTo;
+
+  public UUID getId() {
+    return id;
   }
 
-  public void setResId(UUID resId) {
-    this.resId = resId;
+  public void setId(UUID id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -44,12 +51,11 @@ public class Wichtel extends ResourceSupport {
     this.email = email;
   }
 
-  @JsonIgnore
-  public UUID getWichtelTo() {
+  public WichtelEntity getWichtelTo() {
     return wichtelTo;
   }
 
-  public void setWichtelTo(UUID wichtelTo) {
+  public void setWichtelTo(WichtelEntity wichtelTo) {
     this.wichtelTo = wichtelTo;
   }
 
@@ -61,15 +67,11 @@ public class Wichtel extends ResourceSupport {
     this.mailSent = mailSent;
   }
 
-  public boolean isError() {
-    return sendError != null;
+  public String getSendError() {
+    return sendError;
   }
 
   public void setSendError(String sendError) {
     this.sendError = sendError;
-  }
-
-  public String getSendError() {
-    return sendError;
   }
 }

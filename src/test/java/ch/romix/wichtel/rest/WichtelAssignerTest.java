@@ -1,5 +1,7 @@
 package ch.romix.wichtel.rest;
 
+import java.util.UUID;
+
 import org.junit.Test;
 
 import ch.romix.wichtel.model.Wichtel;
@@ -18,7 +20,7 @@ public class WichtelAssignerTest {
     event.setResId(7);
     WichtelData.addEvent(event);
     Wichtel wichtel = new Wichtel();
-    wichtel.setResId(42);
+    wichtel.setResId(UUID.randomUUID());
     WichtelData.addWichtelToEvent(event.getResId(), wichtel);
     WichtelAssigner.assign(event);
   }
@@ -29,10 +31,10 @@ public class WichtelAssignerTest {
     event.setResId(3);
     WichtelData.addEvent(event);
     Wichtel wichtel1 = new Wichtel();
-    wichtel1.setResId(42);
+    wichtel1.setResId(UUID.randomUUID());
     WichtelData.addWichtelToEvent(event.getResId(), wichtel1);
     Wichtel wichtel2 = new Wichtel();
-    wichtel2.setResId(84);
+    wichtel2.setResId(UUID.randomUUID());
     WichtelData.addWichtelToEvent(event.getResId(), wichtel2);
     WichtelAssigner.assign(event);
     assertThat(wichtel1.getWichtelTo(), is(wichtel2.getResId()));

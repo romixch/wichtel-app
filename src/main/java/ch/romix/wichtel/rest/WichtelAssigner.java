@@ -3,6 +3,7 @@ package ch.romix.wichtel.rest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import ch.romix.wichtel.model.Wichtel;
@@ -25,11 +26,11 @@ public class WichtelAssigner {
 
   private static boolean isCorrectlyAssigned(WichtelEvent event) {
     List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
-    Set<Long> setOfWichtelIds = wichtels.stream().map(Wichtel::getResId).collect(Collectors.toSet());
+    Set<UUID> setOfWichtelIds = wichtels.stream().map(Wichtel::getResId).collect(Collectors.toSet());
     long goodEntries = wichtels.stream() //
         .filter(WichtelAssigner::doesNotWichtelToHimself) //
         .filter(w -> setOfWichtelIds.contains(w.getWichtelTo())) //
-        .mapToLong(Wichtel::getWichtelTo) //
+        .map(Wichtel::getWichtelTo) //
         .distinct() //
         .count();
     return goodEntries == wichtels.size();
@@ -41,11 +42,11 @@ public class WichtelAssigner {
 
   private static void assignWichtels(WichtelEvent event) {
     List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
-    List<Long> availableWichtel = new ArrayList<>();
+    List<UUID> availableWichtel = new ArrayList<>();
     wichtels.forEach(w -> availableWichtel.add(w.getResId()));
     wichtels.forEach(w -> {
       int wichtelToIndex = (int) (availableWichtel.size() * Math.random());
-      Long wichtelTo = availableWichtel.get(wichtelToIndex);
+      UUID wichtelTo = availableWichtel.get(wichtelToIndex);
       w.setWichtelTo(wichtelTo);
       availableWichtel.remove(wichtelToIndex);
     });

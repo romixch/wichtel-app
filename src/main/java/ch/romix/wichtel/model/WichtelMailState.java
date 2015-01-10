@@ -1,9 +1,11 @@
 package ch.romix.wichtel.model;
 
+import java.util.UUID;
+
 
 public class WichtelMailState {
 
-  private Long wichtelResId;
+  private UUID wichtelResId;
   private boolean mailSent;
   private String sendError;
 
@@ -13,11 +15,11 @@ public class WichtelMailState {
     sendError = wichtel.getSendError();
   }
 
-  public Long getWichtelResId() {
+  public UUID getWichtelResId() {
     return wichtelResId;
   }
 
-  public void setWichtelResId(Long wichtelResId) {
+  public void setWichtelResId(UUID wichtelResId) {
     this.wichtelResId = wichtelResId;
   }
 

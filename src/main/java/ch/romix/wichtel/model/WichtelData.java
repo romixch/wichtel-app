@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -27,8 +28,7 @@ public class WichtelData {
   }
 
   public static void addWichtelToEvent(Long eventResId, Wichtel wichtel) {
-    long id = (long) (Math.random() * Long.MAX_VALUE);
-    wichtel.setResId(id);
+    wichtel.setResId(UUID.randomUUID());
     List<Wichtel> wichtelList = wichtels.computeIfAbsent(eventResId, resId -> new CopyOnWriteArrayList<Wichtel>());
     wichtelList.add(wichtel);
   }
@@ -38,9 +38,9 @@ public class WichtelData {
     return wichtelList;
   }
 
-  public static Wichtel getWichtelByEventAndWichtelResId(Long eventResId, Long wichtelResId) {
+  public static Wichtel getWichtelByEventAndWichtelResId(Long eventResId, UUID wichtelResId) {
     List<Wichtel> wichtelList = wichtels.getOrDefault(eventResId, Collections.emptyList());
-    Optional<Wichtel> optionalWichtel = wichtelList.stream().filter(w -> w.getResId() == wichtelResId.longValue()).findAny();
+    Optional<Wichtel> optionalWichtel = wichtelList.stream().filter(w -> w.getResId() == wichtelResId).findAny();
     return optionalWichtel.orElse(null);
   }
 }
