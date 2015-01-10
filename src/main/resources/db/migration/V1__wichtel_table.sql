@@ -15,5 +15,3 @@ CREATE TABLE "wichtel"
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "wichtel"
-  OWNER TO postgres;
