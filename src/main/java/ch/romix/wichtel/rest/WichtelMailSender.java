@@ -60,5 +60,6 @@ public class WichtelMailSender {
       wichtel.setSendError(e.getLocalizedMessage());
     }
     wichtel.setMailSent(true);
+    em.persist(wichtel);
   }
 }
