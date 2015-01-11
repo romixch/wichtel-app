@@ -1,17 +1,19 @@
 package ch.romix.wichtel.model;
 
+import java.util.UUID;
+
 import org.springframework.hateoas.ResourceSupport;
 
 public class WichtelEvent extends ResourceSupport {
-  private long resId;
+  private UUID resId;
   private String name;
   private boolean completed;
 
-  public long getResId() {
+  public UUID getResId() {
     return resId;
   }
 
-  public void setResId(long resId) {
+  public void setResId(UUID resId) {
     this.resId = resId;
   }
 

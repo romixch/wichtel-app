@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class WichtelEventController {
   }
 
   @RequestMapping(value = "/rest/event/{resId}", method = RequestMethod.GET)
-  public HttpEntity<WichtelEvent> getWichtelEvent(@PathVariable("resId") Long resId) {
+  public HttpEntity<WichtelEvent> getWichtelEvent(@PathVariable("resId") UUID resId) {
     WichtelEvent event = WichtelData.getEventByResId(resId);
     Link linkToWichtels = linkTo(methodOn(WichtelController.class).addWichtel(null, event.getResId())).withRel("wichtel");
     Link linkToCompleted = linkTo(methodOn(WichtelEventController.class).completeWichtelEvent(event.getResId())).withRel("completed");
@@ -61,7 +62,7 @@ public class WichtelEventController {
   }
 
   @RequestMapping(value = "/rest/event/{resId}/completed", method = RequestMethod.PUT)
-  public HttpEntity<Void> completeWichtelEvent(@PathVariable("resId") Long resId) {
+  public HttpEntity<Void> completeWichtelEvent(@PathVariable("resId") UUID resId) {
     WichtelEvent event = WichtelData.getEventByResId(resId);
     WichtelAssigner.assign(event);
     wichtelMailSender.sendWichtelMailsAndComplete(event);
@@ -70,7 +71,7 @@ public class WichtelEventController {
   }
 
   @RequestMapping(value = "/rest/event/{resId}/completed", method = RequestMethod.GET)
-  public HttpEntity<MailStates> getWichtelEventCompletionState(@PathVariable("resId") Long resId) {
+  public HttpEntity<MailStates> getWichtelEventCompletionState(@PathVariable("resId") UUID resId) {
     List<Wichtel> wichtelList = WichtelData.getWichtelListByEventResId(resId);
     List<WichtelMailState> mailStates = wichtelList.stream().map(w -> new WichtelMailState(w)).collect(Collectors.toList());
     return new ResponseEntity<MailStates>(new MailStates(mailStates), HttpStatus.OK);

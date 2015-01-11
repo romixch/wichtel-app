@@ -17,7 +17,7 @@ public class WichtelAssignerTest {
   @Test(expected = RuntimeException.class)
   public void testAssignmentWithOneWichtel() throws Exception {
     WichtelEvent event = new WichtelEvent();
-    event.setResId(7);
+    event.setResId(UUID.randomUUID());
     WichtelData.addEvent(event);
     Wichtel wichtel = new Wichtel();
     wichtel.setResId(UUID.randomUUID());
@@ -28,7 +28,7 @@ public class WichtelAssignerTest {
   @Test
   public void testAssignmentWithTwoWichtels() throws Exception {
     WichtelEvent event = new WichtelEvent();
-    event.setResId(3);
+    event.setResId(UUID.randomUUID());
     WichtelData.addEvent(event);
     Wichtel wichtel1 = new Wichtel();
     wichtel1.setResId(UUID.randomUUID());

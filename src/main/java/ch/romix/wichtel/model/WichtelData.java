@@ -10,12 +10,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WichtelData {
 
-  final static ConcurrentHashMap<Long, WichtelEvent> events = new ConcurrentHashMap<>();
-  final static ConcurrentHashMap<Long, List<Wichtel>> wichtels = new ConcurrentHashMap<>();
+  final static ConcurrentHashMap<UUID, WichtelEvent> events = new ConcurrentHashMap<>();
+  final static ConcurrentHashMap<UUID, List<Wichtel>> wichtels = new ConcurrentHashMap<>();
 
   public static void addEvent(WichtelEvent event) {
-    long id = (long) (Math.random() * Long.MAX_VALUE);
-    event.setResId(id);
+    event.setResId(UUID.randomUUID());
     events.put(event.getResId(), event);
   }
 
@@ -23,22 +22,22 @@ public class WichtelData {
     return events.values();
   }
 
-  public static WichtelEvent getEventByResId(Long resId) {
+  public static WichtelEvent getEventByResId(UUID resId) {
     return events.get(resId);
   }
 
-  public static void addWichtelToEvent(Long eventResId, Wichtel wichtel) {
+  public static void addWichtelToEvent(UUID eventResId, Wichtel wichtel) {
     wichtel.setResId(UUID.randomUUID());
     List<Wichtel> wichtelList = wichtels.computeIfAbsent(eventResId, resId -> new CopyOnWriteArrayList<Wichtel>());
     wichtelList.add(wichtel);
   }
 
-  public static List<Wichtel> getWichtelListByEventResId(Long eventResId) {
+  public static List<Wichtel> getWichtelListByEventResId(UUID eventResId) {
     List<Wichtel> wichtelList = wichtels.getOrDefault(eventResId, Collections.emptyList());
     return wichtelList;
   }
 
-  public static Wichtel getWichtelByEventAndWichtelResId(Long eventResId, UUID wichtelResId) {
+  public static Wichtel getWichtelByEventAndWichtelResId(UUID eventResId, UUID wichtelResId) {
     List<Wichtel> wichtelList = wichtels.getOrDefault(eventResId, Collections.emptyList());
     Optional<Wichtel> optionalWichtel = wichtelList.stream().filter(w -> w.getResId() == wichtelResId).findAny();
     return optionalWichtel.orElse(null);

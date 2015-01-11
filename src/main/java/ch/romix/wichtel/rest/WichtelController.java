@@ -35,7 +35,7 @@ public class WichtelController {
   private EntityManager em;
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.POST)
-  public HttpEntity<Void> addWichtel(@RequestBody Wichtel wichtel, @PathVariable("eid") Long eventId) {
+  public HttpEntity<Void> addWichtel(@RequestBody Wichtel wichtel, @PathVariable("eid") UUID eventId) {
     WichtelEntity wichtelEntity = new WichtelEntity();
     wichtelEntity.setId(UUID.randomUUID());
     wichtelEntity.setEvent(null);
@@ -48,7 +48,7 @@ public class WichtelController {
   }
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.GET)
-  public HttpEntity<Collection<Link>> getWichtelLinks(@PathVariable("eid") Long eventId) {
+  public HttpEntity<Collection<Link>> getWichtelLinks(@PathVariable("eid") UUID eventId) {
     ArrayList<Link> links = new ArrayList<>();
     WichtelEvent event = WichtelData.getEventByResId(eventId);
     if (event.isCompleted()) {
@@ -62,7 +62,7 @@ public class WichtelController {
   }
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel/{id}", method = RequestMethod.GET)
-  public HttpEntity<Wichtel> getWichtel(@PathVariable("eid") Long eventId, @PathVariable("id") UUID wichtelId) {
+  public HttpEntity<Wichtel> getWichtel(@PathVariable("eid") UUID eventId, @PathVariable("id") UUID wichtelId) {
     WichtelEvent event = WichtelData.getEventByResId(eventId);
     if (event.isCompleted()) {
       return new ResponseEntity<Wichtel>(HttpStatus.FORBIDDEN);
