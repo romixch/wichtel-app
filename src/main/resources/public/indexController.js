@@ -52,6 +52,13 @@ app.controller('EventController', function($scope, $resource) {
     $scope.currentEmail = '';
     document.getElementById('currentName').focus();
   };
+  
+  $scope.deleteWichtel = function(wichtel) {
+    var $res = $resource(wichtel.links[0].href).delete(function(data) {
+      var index = $scope.wichtels.indexOf(wichtel);
+      $scope.wichtels.splice(index, 1);
+    });
+  };
 
   $scope.completeEvent = function() {
     $scope.sendingMails = true;

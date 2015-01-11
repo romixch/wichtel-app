@@ -82,7 +82,22 @@ public class WichtelController {
       if (wichtelEntity.getWichtelTo() != null) {
         wichtel.setWichtelTo(wichtelEntity.getWichtelTo().getId());
       }
+      Link selfRel = linkTo(methodOn(WichtelController.class).getWichtel(eventId, wichtelId)).withSelfRel();
+      wichtel.add(selfRel);
       return ResponseEntity.ok(wichtel);
     }
+  }
+
+  @RequestMapping(value = "/rest/event/{eid}/wichtel/{id}", method = RequestMethod.DELETE)
+  public HttpEntity<Void> deleteWichtel(@PathVariable("eid") UUID eventId, @PathVariable("id") UUID wichtelId) {
+    WichtelEntity wichtelEntity = em.find(WichtelEntity.class, wichtelId);
+    if (wichtelEntity == null) {
+      return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+    }
+    if (wichtelEntity.getEvent().isCompleted()) {
+      return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+    }
+    em.remove(wichtelEntity);
+    return new ResponseEntity<Void>(HttpStatus.OK);
   }
 }
