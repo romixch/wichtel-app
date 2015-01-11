@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -17,6 +18,8 @@ public class WichtelEntity {
   @Id
   @Type(type = "pg-uuid")
   private UUID id;
+  @ManyToOne(optional = false)
+  private WichtelEventEntity event;
   @Column(nullable = false)
   private String name;
   @Column(nullable = false)
@@ -33,6 +36,14 @@ public class WichtelEntity {
 
   public void setId(UUID id) {
     this.id = id;
+  }
+
+  public WichtelEventEntity getEvent() {
+    return event;
+  }
+
+  public void setEvent(WichtelEventEntity event) {
+    this.event = event;
   }
 
   public String getName() {

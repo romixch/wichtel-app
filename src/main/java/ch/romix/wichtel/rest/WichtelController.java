@@ -38,6 +38,7 @@ public class WichtelController {
   public HttpEntity<Void> addWichtel(@RequestBody Wichtel wichtel, @PathVariable("eid") Long eventId) {
     WichtelEntity wichtelEntity = new WichtelEntity();
     wichtelEntity.setId(UUID.randomUUID());
+    wichtelEntity.setEvent(null);
     wichtelEntity.setName(wichtel.getName());
     wichtelEntity.setEmail(wichtel.getEmail());
     em.persist(wichtelEntity);
