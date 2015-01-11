@@ -40,13 +40,6 @@
 			<div class="col-sm-8">
 				<input type="text" class="form-control" placeholder="Wichtel-Titel" ng-model="title" , ng-blur="blurTitle()"
 					ng-disabled="eventRes != null">
-			</div>
-			<div class="col-sm-4">
-				<p>Gib einen Titel f&uuml;r deinen Wichtel-Event ein, damit deine Teilnehmer wissen, worum es geht.</p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-8">
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<tr>
@@ -56,15 +49,12 @@
 							<th></th>
 						</tr>
 						<tr ng-repeat="wichtel in wichtels">
-							<td ng-show="triedToSend">
-								<span ng-show="showTime(wichtel)" class="glyphicon glyphicon-time" aria-hidden="true"></span>
-								<span ng-show="showOK(wichtel)" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-								<span ng-show="showError(wichtel)" ng-click="showErrorMessage(wichtel)" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							</td>
+							<td ng-show="triedToSend"><span ng-show="showTime(wichtel)" class="glyphicon glyphicon-time" aria-hidden="true"></span> <span
+								ng-show="showOK(wichtel)" class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span ng-show="showError(wichtel)"
+								ng-click="showErrorMessage(wichtel)" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></td>
 							<td>{{wichtel.name}}</td>
 							<td>{{wichtel.email}}</td>
-							<td ng-show="!triedToSend">
-								<span class="glyphicon glyphicon-trash" ng-click="deleteWichtel(wichtel)" aria-hidden="true"></span>
+							<td ng-show="!triedToSend"><span class="glyphicon glyphicon-trash" ng-click="deleteWichtel(wichtel)" aria-hidden="true"></span>
 							</td>
 						</tr>
 						<tr>
@@ -86,23 +76,27 @@
 						</tr>
 					</table>
 				</div>
-			</div>
-			<div class="col-sm-4">F&uuml;ge Teilnehmer hinzu. Die Wichtel erhalten sp&auml;ter ein E-Mail wo drin steht, wem sie wichteln
-				d&uuml;rfen.</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-1">
 				<div class="input-group">
-					<button class="btn btn-primary" type="button" ng-click="completeEvent()" ng-disabled="completedRes == null">Auslosen und E-Mails verschicken</button>
+					<button class="btn btn-primary" type="button" ng-click="completeEvent()" ng-disabled="completedRes == null">Auslosen und
+						E-Mails verschicken</button>
 				</div>
+				<p ng-show="sendingMails" class="bg-warning">
+					<img src="spinner.gif"> Wir verschicken gerade die Mails. Verfolge den Status oben in der Tabelle.
+				</p>
+				<p ng-show="triedToSend && !sendingMails" class="bg-success">Falls du oben bei allen Teilnehmern ein OK erhalten hast, bist du jetzt
+					fertig.</p>
 			</div>
-			<div class="col-sm-11">
-			<p ng-show="sendingMails" class="bg-warning">
-				<img src="spinner.gif"> Wir verschicken gerade die Mails. Verfolge den Status oben in der Tabelle.
-			</p>
-			<p ng-show="triedToSend && !sendingMails" class="bg-success">
-				Falls du oben bei allen Teilnehmern ein OK erhalten hast, bist du jetzt fertig.
-			</p>
+			<div class="col-sm-4 bg-info">
+				<p><strong>Beispiel E-Mail an Teilnehmer:</strong></p>
+				<p>von: wichtelapp.mailer@gmailcom</p>
+				<p>an: Wichtel XY</p>
+				<p>Betreff: Wichteln f&uuml;r {{title}}</p>
+				<p>
+					Hallo Wichtel XY<br /> <br /> Hier schreibt deine Wichtel-App von <a href="https://wichtel-app.herokuapp.com/" target="_blank">https://wichtel-app.herokuapp.com/</a>.
+					Jemand hat dich zum Wichteln eingeladen<br /> <br /> Du darfst f&uuml;r "anderer Teilnehmer-Name" wichteln.<br /> <br /> Ist dir
+					nicht ganz klar, was das soll? Antworte einfach auf dieses Mail und stell deine Frage.<br /> <br /> Liebe Grüsse<br /> Deine
+					Wichtel-App
+				</p>
 			</div>
 		</div>
 	</div>
