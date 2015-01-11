@@ -29,6 +29,12 @@ public class WichtelMailSender {
 
   @Async
   public Future<Void> sendWichtelMailsAndComplete(UUID eventId) {
+    try {
+      // workaround just for waiting that the previous transaction is committed.
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
     WichtelEventEntity event = em.find(WichtelEventEntity.class, eventId);
     Set<WichtelEntity> wichtelList = event.getWichtels();
     wichtelList.forEach(w -> w.setMailSent(false));
@@ -57,7 +63,14 @@ public class WichtelMailSender {
       helper.setText(text.toString());
       mailSender.send(message);
     } catch (Exception e) {
-      wichtel.setSendError(e.getLocalizedMessage());
+      String msg = e.getLocalizedMessage();
+      if (msg == null) {
+        msg = e.getMessage();
+      }
+      if (msg == null) {
+        msg = e.toString();
+      }
+      wichtel.setSendError(msg);
     }
     wichtel.setMailSent(true);
     em.persist(wichtel);
