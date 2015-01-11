@@ -20,9 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.romix.wichtel.model.Wichtel;
-import ch.romix.wichtel.model.WichtelData;
 import ch.romix.wichtel.model.WichtelEntity;
-import ch.romix.wichtel.model.WichtelEvent;
+import ch.romix.wichtel.model.WichtelEventEntity;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -36,26 +35,26 @@ public class WichtelController {
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.POST)
   public HttpEntity<Void> addWichtel(@RequestBody Wichtel wichtel, @PathVariable("eid") UUID eventId) {
+    WichtelEventEntity eventEntity = em.find(WichtelEventEntity.class, eventId);
     WichtelEntity wichtelEntity = new WichtelEntity();
     wichtelEntity.setId(UUID.randomUUID());
-    wichtelEntity.setEvent(null);
+    wichtelEntity.setEvent(eventEntity);
     wichtelEntity.setName(wichtel.getName());
     wichtelEntity.setEmail(wichtel.getEmail());
     em.persist(wichtelEntity);
-    WichtelData.addWichtelToEvent(eventId, wichtel);
-    URI location = linkTo(methodOn(getClass()).getWichtel(eventId, wichtel.getResId())).toUri();
+    URI location = linkTo(methodOn(getClass()).getWichtel(wichtelEntity.getEvent().getId(), wichtelEntity.getId())).toUri();
     return ResponseEntity.created(location).build();
   }
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.GET)
   public HttpEntity<Collection<Link>> getWichtelLinks(@PathVariable("eid") UUID eventId) {
     ArrayList<Link> links = new ArrayList<>();
-    WichtelEvent event = WichtelData.getEventByResId(eventId);
+    WichtelEventEntity event = em.find(WichtelEventEntity.class, eventId);
     if (event.isCompleted()) {
       return new ResponseEntity<Collection<Link>>(HttpStatus.FORBIDDEN);
     }
-    for (Wichtel wichtel : WichtelData.getWichtelListByEventResId(eventId)) {
-      Link link = linkTo(methodOn(getClass()).getWichtel(eventId, wichtel.getResId())).withRel("wichtel");
+    for (WichtelEntity wichtel : event.getWichtels()) {
+      Link link = linkTo(methodOn(getClass()).getWichtel(eventId, wichtel.getId())).withRel("wichtel");
       links.add(link);
     }
     return new ResponseEntity<Collection<Link>>(links, HttpStatus.OK);
@@ -63,14 +62,26 @@ public class WichtelController {
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel/{id}", method = RequestMethod.GET)
   public HttpEntity<Wichtel> getWichtel(@PathVariable("eid") UUID eventId, @PathVariable("id") UUID wichtelId) {
-    WichtelEvent event = WichtelData.getEventByResId(eventId);
+    WichtelEventEntity event = em.find(WichtelEventEntity.class, eventId);
     if (event.isCompleted()) {
       return new ResponseEntity<Wichtel>(HttpStatus.FORBIDDEN);
     }
-    Wichtel wichtel = WichtelData.getWichtelByEventAndWichtelResId(eventId, wichtelId);
-    if (wichtel == null) {
+    WichtelEntity wichtelEntity = em.find(WichtelEntity.class, wichtelId);
+    if (wichtelEntity == null) {
       return new ResponseEntity<Wichtel>(HttpStatus.NOT_FOUND);
     } else {
+      if (!wichtelEntity.getEvent().equals(event)) {
+        return new ResponseEntity<Wichtel>(HttpStatus.FORBIDDEN);
+      }
+      Wichtel wichtel = new Wichtel();
+      wichtel.setResId(wichtelEntity.getId());
+      wichtel.setName(wichtelEntity.getName());
+      wichtel.setEmail(wichtelEntity.getEmail());
+      wichtel.setMailSent(wichtelEntity.isMailSent());
+      wichtel.setSendError(wichtelEntity.getSendError());
+      if (wichtelEntity.getWichtelTo() != null) {
+        wichtel.setWichtelTo(wichtelEntity.getWichtelTo().getId());
+      }
       return ResponseEntity.ok(wichtel);
     }
   }

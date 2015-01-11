@@ -6,14 +6,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import ch.romix.wichtel.model.Wichtel;
-import ch.romix.wichtel.model.WichtelData;
-import ch.romix.wichtel.model.WichtelEvent;
+import ch.romix.wichtel.model.WichtelEntity;
+import ch.romix.wichtel.model.WichtelEventEntity;
 
 public class WichtelAssigner {
 
-  public static void assign(WichtelEvent event) {
-    List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
+  public static void assign(WichtelEventEntity event) {
+    Set<WichtelEntity> wichtels = event.getWichtels();
     if (wichtels.size() <= 1) {
       throw new RuntimeException("WTF! You can't assign wichtels with only one or less wichtel. That's not fun! It does not make sense!");
     }
@@ -24,29 +23,28 @@ public class WichtelAssigner {
     }
   }
 
-  private static boolean isCorrectlyAssigned(WichtelEvent event) {
-    List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
-    Set<UUID> setOfWichtelIds = wichtels.stream().map(Wichtel::getResId).collect(Collectors.toSet());
+  private static boolean isCorrectlyAssigned(WichtelEventEntity event) {
+    Set<WichtelEntity> wichtels = event.getWichtels();
+    Set<UUID> setOfWichtelIds = wichtels.stream().map(WichtelEntity::getId).collect(Collectors.toSet());
     long goodEntries = wichtels.stream() //
         .filter(WichtelAssigner::doesNotWichtelToHimself) //
-        .filter(w -> setOfWichtelIds.contains(w.getWichtelTo())) //
-        .map(Wichtel::getWichtelTo) //
+        .filter(w -> setOfWichtelIds.contains(w.getWichtelTo().getId())) //
+        .map(WichtelEntity::getWichtelTo) //
         .distinct() //
         .count();
     return goodEntries == wichtels.size();
   }
 
-  private static boolean doesNotWichtelToHimself(Wichtel w) {
-    return w.getResId() != w.getWichtelTo();
+  private static boolean doesNotWichtelToHimself(WichtelEntity w) {
+    return w.getWichtelTo() != null && !w.getId().equals(w.getWichtelTo().getId());
   }
 
-  private static void assignWichtels(WichtelEvent event) {
-    List<Wichtel> wichtels = WichtelData.getWichtelListByEventResId(event.getResId());
-    List<UUID> availableWichtel = new ArrayList<>();
-    wichtels.forEach(w -> availableWichtel.add(w.getResId()));
+  private static void assignWichtels(WichtelEventEntity event) {
+    Set<WichtelEntity> wichtels = event.getWichtels();
+    List<WichtelEntity> availableWichtel = new ArrayList<>(wichtels);
     wichtels.forEach(w -> {
       int wichtelToIndex = (int) (availableWichtel.size() * Math.random());
-      UUID wichtelTo = availableWichtel.get(wichtelToIndex);
+      WichtelEntity wichtelTo = availableWichtel.get(wichtelToIndex);
       w.setWichtelTo(wichtelTo);
       availableWichtel.remove(wichtelToIndex);
     });

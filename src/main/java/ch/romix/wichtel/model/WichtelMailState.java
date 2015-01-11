@@ -9,8 +9,8 @@ public class WichtelMailState {
   private boolean mailSent;
   private String sendError;
 
-  public WichtelMailState(Wichtel wichtel) {
-    wichtelResId = wichtel.getResId();
+  public WichtelMailState(WichtelEntity wichtel) {
+    wichtelResId = wichtel.getId();
     mailSent = wichtel.isMailSent();
     sendError = wichtel.getSendError();
   }

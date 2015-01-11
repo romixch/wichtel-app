@@ -1,6 +1,7 @@
 package ch.romix.wichtel.integration;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = WichtelApp.class)
@@ -52,8 +54,11 @@ public class WichtelResourceTest {
     @SuppressWarnings("unchecked")
     List<Map<String, String>> wichtelLinks = restTemplate.getForObject(wichtelLink.getHref(), List.class);
     assertThat(wichtelLinks.size(), is(2));
-    assertThat(wichtelLinks.get(0).get("href"), is(wichtel1Location.toString()));
-    assertThat(wichtelLinks.get(1).get("href"), is(wichtel2Location.toString()));
+    HashSet<Object> expectedLocations = new HashSet<>();
+    expectedLocations.add(wichtel1Location.toString());
+    expectedLocations.add(wichtel2Location.toString());
+    assertTrue(expectedLocations.contains(wichtelLinks.get(0).get("href")));
+    assertTrue(expectedLocations.contains(wichtelLinks.get(1).get("href")));
   }
 
   private URI postWichtel(Link wichtelLink, String email, String name) {
