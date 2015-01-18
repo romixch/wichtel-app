@@ -1,6 +1,8 @@
 package ch.romix.wichtel.rest;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,6 +48,7 @@ public class WichtelEventController {
     WichtelEventEntity eventEntity = new WichtelEventEntity();
     eventEntity.setId(UUID.randomUUID());
     eventEntity.setName(event.getName());
+    eventEntity.setDate(LocalDate.now(ZoneId.of("Europe/Zurich")));
     em.persist(eventEntity);
     URI uri = linkTo(methodOn(getClass()).getWichtelEvent(eventEntity.getId())).toUri();
     return ResponseEntity.created(uri).build();

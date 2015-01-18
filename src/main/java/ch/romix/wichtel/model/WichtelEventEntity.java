@@ -1,11 +1,13 @@
 package ch.romix.wichtel.model;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -29,6 +31,9 @@ public class WichtelEventEntity {
   private boolean completed;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
   private Set<WichtelEntity> wichtels;
+  @Convert(converter = LocalDateConverter.class)
+  @Column(name = "creation_date")
+  private LocalDate date;
 
   public UUID getId() {
     return id;
@@ -59,5 +64,13 @@ public class WichtelEventEntity {
       wichtels = new HashSet<WichtelEntity>();
     }
     return wichtels;
+  }
+
+  public LocalDate getDate() {
+    return date;
+  }
+
+  public void setDate(LocalDate date) {
+    this.date = date;
   }
 }
