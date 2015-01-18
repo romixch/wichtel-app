@@ -1,12 +1,10 @@
 package ch.romix.wichtel.integration;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 import org.hamcrest.Matchers;
@@ -53,7 +51,7 @@ public class CompletionTest {
   }
 
   @Test
-  public void testCompleteWichtelEvent() throws MessagingException, IOException, InterruptedException {
+  public void testCompleteWichtelEvent() throws Exception {
     WichtelEvent event = createEvent("MyEvent");
     Link wichtelLink = event.getLink("wichtel");
     postWichtel(wichtelLink, "w1@example.com", "w1");
@@ -61,7 +59,6 @@ public class CompletionTest {
     Link completeLink = event.getLink("completed");
     assertNotNull(completeLink);
     restTemplate.put(completeLink.getHref(), Boolean.TRUE);
-    Thread.sleep(2000); // wait for mails to be sent
     assertSentMail("wichtelapp.mailer@gmail.com", "w1@example.com", "Wichteln für MyEvent", "Wichtel2");
     assertSentMail("wichtelapp.mailer@gmail.com", "wichtel2@example.com", "Wichteln für MyEvent", "w1");
     assertNoMoreMails("w1@example.com");
@@ -76,9 +73,13 @@ public class CompletionTest {
     restTemplate.put(completeLink.getHref(), Boolean.TRUE);
   }
 
-  private void assertSentMail(String from, String to, String subject, String... containedInContent) throws AddressException,
-      MessagingException, IOException {
+  private void assertSentMail(String from, String to, String subject, String... containedInContent) throws Exception {
     Mailbox mailbox = Mailbox.get(to);
+    int iterations = 0;
+    while (mailbox.size() == 0 && iterations < 5) {
+      Thread.sleep(1000);
+      iterations++;
+    }
     Message message = mailbox.get(0);
     assertThat(message.getFrom()[0].toString(), is(from));
     assertThat(message.getSubject(), is(subject));
