@@ -7,3 +7,15 @@ body {
 .bg-primary, .bg-info, .bg-warning, .bg-success, .bg-danger {
 	padding: 8px;
 }
+
+.wichtel-form {
+	margin-bottom: 14px;
+}
+
+.example-mail {
+	padding: 9px 14px;
+	margin-bottom: 14px;
+	background-color: #d0dae0;
+	border: 1px solid #45525d;
+	border-radius: 4px;
+}

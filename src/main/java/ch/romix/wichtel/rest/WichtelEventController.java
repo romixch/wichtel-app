@@ -80,6 +80,17 @@ public class WichtelEventController {
     return new ResponseEntity<WichtelEvent>(event, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/rest/event/{eid}", method = RequestMethod.PUT)
+  public HttpEntity<Void> updateEvent(@PathVariable("eid") UUID eid, @RequestBody WichtelEvent event) {
+    WichtelEventEntity persistedEvent = em.find(WichtelEventEntity.class, eid);
+    if (persistedEvent.isCompleted()) {
+      return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+    }
+    persistedEvent.setName(event.getName());
+    em.persist(persistedEvent);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/rest/event/{resId}/completed", method = RequestMethod.PUT)
   public HttpEntity<Void> completeWichtelEvent(@PathVariable("resId") UUID resId) {
     WichtelEventEntity eventEntity = em.find(WichtelEventEntity.class, resId);

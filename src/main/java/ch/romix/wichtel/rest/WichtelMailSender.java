@@ -58,7 +58,7 @@ public class WichtelMailSender {
       text.append("Hallo ").append(wichtel.getName()).append("\n\n");
       text.append("Hier schreibt deine Wichtel-App von https://wichtel-app.herokuapp.com/. Jemand hat dich zum Wichteln eingeladen.\n\n");
       text.append("Du darfst für ").append(wichtel.getWichtelTo().getName()).append(" wichteln.\n\n");
-      text.append("Ist dir nicht ganz klar, was das soll? Antworte einfach auf dieses Mail und stell deine Frage.\n\n");
+      text.append("Noch Fragen? Antworte einfach auf dieses Mail und stell deine Frage.\n\n");
       text.append("Liebe Grüsse\nDeine Wichtel-App");
       helper.setText(text.toString());
       mailSender.send(message);

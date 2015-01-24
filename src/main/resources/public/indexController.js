@@ -20,11 +20,19 @@ app.controller('EventController', function($scope, $resource) {
       $scope.eventsRes.save({
         name: $scope.title
       }, $scope.onEventSaved);
+    } else {
+      $scope.eventRes.update({
+        name: $scope.title
+      });
     }
   };
 
   $scope.onEventSaved = function(data, headers) {
-    $scope.eventRes = $resource(headers('Location'));
+    $scope.eventRes = $resource(headers('Location'), null, {
+      'update': {
+        method: 'PUT'
+      }
+    });
     $scope.eventRes.get($scope.onEventReceived);
   };
 
@@ -38,6 +46,13 @@ app.controller('EventController', function($scope, $resource) {
   };
 
   $scope.addWichtel = function() {
+    if ($scope.eventRes === null) {
+      $scope.title = 'Titel';
+      $scope.eventsRes.save({
+        name: $scope.title
+      }, $scope.onEventSavedWichtel);
+      return;
+    }
     var wichtelTupl = {
       name: $scope.currentName,
       email: $scope.currentEmail
@@ -51,6 +66,25 @@ app.controller('EventController', function($scope, $resource) {
     $scope.currentName = '';
     $scope.currentEmail = '';
     document.getElementById('currentName').focus();
+  };
+  
+  $scope.onEventSavedWichtel = function(data, headers) {
+    $scope.eventRes = $resource(headers('Location'), null, {
+      'update': {
+        method: 'PUT'
+      }
+    });
+    $scope.eventRes.get($scope.onEventReceivedWichtel);
+  };
+
+  $scope.onEventReceivedWichtel = function(data) {
+    $scope.wichtelRes = $resource(data.links[0].href);
+    $scope.completedRes = $resource(data.links[1].href, null, {
+      'update': {
+        method: 'PUT'
+      }
+    });
+    $scope.addWichtel();
   };
   
   $scope.deleteWichtel = function(wichtel) {
