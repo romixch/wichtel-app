@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.romix.wichtel.model.Wichtel;
 import ch.romix.wichtel.model.WichtelEntity;
 import ch.romix.wichtel.model.WichtelEventEntity;
 

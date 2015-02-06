@@ -1,6 +1,8 @@
-package ch.romix.wichtel.model;
+package ch.romix.wichtel.rest;
 
 import java.util.UUID;
+
+import ch.romix.wichtel.model.WichtelEntity;
 
 
 public class WichtelMailState {

@@ -24,8 +24,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import ch.romix.wichtel.WichtelApp;
-import ch.romix.wichtel.model.Wichtel;
-import ch.romix.wichtel.model.WichtelEvent;
+import ch.romix.wichtel.rest.Wichtel;
+import ch.romix.wichtel.rest.WichtelEvent;
 
 import static org.hamcrest.Matchers.is;
 

@@ -25,11 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.romix.wichtel.model.MailStates;
 import ch.romix.wichtel.model.WichtelEntity;
-import ch.romix.wichtel.model.WichtelEvent;
 import ch.romix.wichtel.model.WichtelEventEntity;
-import ch.romix.wichtel.model.WichtelMailState;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;

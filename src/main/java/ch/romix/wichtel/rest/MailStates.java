@@ -1,4 +1,4 @@
-package ch.romix.wichtel.model;
+package ch.romix.wichtel.rest;
 
 import java.util.List;
 

@@ -14,7 +14,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import ch.romix.wichtel.WichtelApp;
-import ch.romix.wichtel.model.WichtelEvent;
+import ch.romix.wichtel.rest.WichtelEvent;
 
 import static org.hamcrest.Matchers.is;
 
