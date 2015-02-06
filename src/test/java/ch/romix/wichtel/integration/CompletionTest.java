@@ -54,11 +54,21 @@ public class CompletionTest {
   public void testCompleteWichtelEvent() throws Exception {
     WichtelEvent event = createEvent("MyEvent");
     Link wichtelLink = event.getLink("wichtel");
-    postWichtel(wichtelLink, "w1@example.com", "w1");
-    postWichtel(wichtelLink, "wichtel2@example.com", "Wichtel2");
+
+    URI wichtel1URI = postWichtel(wichtelLink, "w1@example.com", "w1");
+    Wichtel wichtel1 = getWichtel(wichtel1URI);
+    Link completedWichtel1 = wichtel1.getLink("completed");
+    URI wichtel2URI = postWichtel(wichtelLink, "wichtel2@example.com", "Wichtel2");
+    Wichtel wichtel2 = getWichtel(wichtel2URI);
+    Link completedWichtel2 = wichtel2.getLink("completed");
     Link completeLink = event.getLink("completed");
+
     assertNotNull(completeLink);
     restTemplate.put(completeLink.getHref(), Boolean.TRUE);
+
+    restTemplate.put(URI.create(completedWichtel1.getHref()), Boolean.TRUE);
+    restTemplate.put(URI.create(completedWichtel2.getHref()), Boolean.TRUE);
+
     assertSentMail("wichtelapp.mailer@gmail.com", "w1@example.com", "Wichteln für MyEvent", "Wichtel2");
     assertSentMail("wichtelapp.mailer@gmail.com", "wichtel2@example.com", "Wichteln für MyEvent", "w1");
     assertNoMoreMails("w1@example.com");
@@ -114,5 +124,9 @@ public class CompletionTest {
     ResponseEntity<Void> wichtelResponse = restTemplate.postForEntity(wichtelLink.getHref(), wichtel, Void.class);
     URI location = wichtelResponse.getHeaders().getLocation();
     return location;
+  }
+
+  private Wichtel getWichtel(URI wichtelURI) {
+    return restTemplate.getForEntity(wichtelURI, Wichtel.class).getBody();
   }
 }

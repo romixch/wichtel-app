@@ -1,8 +1,6 @@
 package ch.romix.wichtel.rest;
 
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Future;
 
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
@@ -12,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import ch.romix.wichtel.model.WichtelEntity;
-import ch.romix.wichtel.model.WichtelEventEntity;
 
 @Service
 @Transactional
@@ -28,25 +24,8 @@ public class WichtelMailSender {
   private EntityManager em;
 
   @Async
-  public Future<Void> sendWichtelMailsAndComplete(UUID eventId) {
-    try {
-      // workaround just for waiting that the previous transaction is committed.
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-    WichtelEventEntity event = em.find(WichtelEventEntity.class, eventId);
-    Set<WichtelEntity> wichtelList = event.getWichtels();
-    wichtelList.forEach(w -> w.setMailSent(false));
-    for (WichtelEntity wichtel : wichtelList) {
-      send(wichtel);
-    }
-    event.setCompleted(true);
-    em.persist(event);
-    return new AsyncResult<Void>(null);
-  }
-
-  private void send(WichtelEntity wichtel) {
+  public void sendMail(UUID wichtelId) {
+    WichtelEntity wichtel = em.find(WichtelEntity.class, wichtelId);
     MimeMessage message = mailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message);
     wichtel.setSendError(null);

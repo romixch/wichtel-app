@@ -92,7 +92,8 @@ public class WichtelEventController {
   public HttpEntity<Void> completeWichtelEvent(@PathVariable("resId") UUID resId) {
     WichtelEventEntity eventEntity = em.find(WichtelEventEntity.class, resId);
     WichtelAssigner.assign(eventEntity);
-    wichtelMailSender.sendWichtelMailsAndComplete(eventEntity.getId());
+    eventEntity.setCompleted(true);
+    em.persist(eventEntity);
     Link completionState = linkTo(methodOn(WichtelEventController.class).getWichtelEventCompletionState(resId)).withSelfRel();
     return ResponseEntity.accepted().location(URI.create(completionState.getHref())).build();
   }

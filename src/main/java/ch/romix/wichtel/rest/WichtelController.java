@@ -31,6 +31,8 @@ public class WichtelController {
 
   @Autowired
   private EntityManager em;
+  @Autowired
+  private WichtelMailSender wichtelMailSender;
 
   @RequestMapping(value = "/rest/event/{eid}/wichtel", method = RequestMethod.POST)
   public HttpEntity<Void> addWichtel(@RequestBody Wichtel wichtel, @PathVariable("eid") UUID eventId) {
@@ -83,6 +85,8 @@ public class WichtelController {
       }
       Link selfRel = linkTo(methodOn(WichtelController.class).getWichtel(eventId, wichtelId)).withSelfRel();
       wichtel.add(selfRel);
+      Link completeRel = linkTo(methodOn(WichtelController.class).sendWichtelMail(eventId, wichtelId)).withRel("completed");
+      wichtel.add(completeRel);
       return ResponseEntity.ok(wichtel);
     }
   }
@@ -98,5 +102,22 @@ public class WichtelController {
     }
     em.remove(wichtelEntity);
     return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/rest/event/{eid}/wichtel/{id}/completed", method = RequestMethod.PUT)
+  public HttpEntity<Void> sendWichtelMail(@PathVariable("eid") UUID eventId, @PathVariable("id") UUID wichtelId) {
+    WichtelEventEntity event = em.find(WichtelEventEntity.class, eventId);
+    if (!event.isCompleted()) {
+      return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+    }
+    WichtelEntity wichtelEntity = em.find(WichtelEntity.class, wichtelId);
+    if (wichtelEntity == null) {
+      return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+    } else {
+      wichtelEntity.setMailSent(false);
+      em.persist(wichtelEntity);
+      wichtelMailSender.sendMail(wichtelEntity.getId());
+      return new ResponseEntity<Void>(HttpStatus.OK);
+    }
   }
 }

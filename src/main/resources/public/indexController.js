@@ -102,7 +102,20 @@ app.controller('EventController', function($scope, $resource) {
 
   $scope.onComplete = function(data, headers) {
     $scope.sendStatusRes = $resource(headers('Location'));
+    $scope.triggerMails();
     $scope.onGetNewSendState(null);
+  };
+  
+  $scope.triggerMails = function() {
+    for (var w = 0; w < $scope.wichtels.length; w++) {
+      var wichtel = $scope.wichtels[w];
+      var $res = $resource(wichtel.links[1].href, null, {
+        'update': {
+          method: 'PUT'
+        }
+      });
+      $res.update();
+    }
   };
 
   $scope.onGetNewSendState = function(data) {
